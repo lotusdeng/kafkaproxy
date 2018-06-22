@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <table width="100%" border="1">
+        {{range .AppConfItemList}}
+        <tr align="center">
+            <td>{{.ConfName}}</td>
+            <td>
+                <form name="form{{.ConfKey}}" method="POST" action="conf" >
+                    <input type="text" name="ConfKey" value="{{.ConfKey}}" hidden="true"/>
+                    <input type="text" name="{{.ConfKey}}" value="{{.ConfValue}}"/>
+                    <input type="submit" value="修改" /> 
+                </form>
+            </td>
+           
+        </tr>
+        {{end}}
+    </table>
+
+
+</body>
+
+</html>

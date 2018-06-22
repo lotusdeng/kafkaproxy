@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>KafkaProxy</title>
+</head>
+
+<body>
+    <h3>KafkaProxy</h3>
+    <h3>服务信息</h3>
+    <table width="100%" border="1">
+        {{range .AppInfoItemList}}
+        <tr align="center">
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+        </tr>
+        {{end}}
+    </table>
+    <h3>配置信息</h3>
+    <table width="100%" border="1">
+        {{range .AppConfItemList}}
+        <tr align="center">
+            <td>{{.ConfName}}</td>
+            <td>{{.ConfValue}}</td>
+        </tr>
+        {{end}}
+    </table>
+    <h3>服务状态:</h3>
+    <table width="100%" border="1">
+        {{range .AppStatusItemList}}
+        <tr align="center">
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+        </tr>
+        {{end}}
+    </table>
+
+    {{range .TopicGroupStatusItemList}}
+    <h3>{{.Topic}}:{{.Group}}</h3>
+    <h4>Partition:个数:{{.PartitionCount}}|TotalCurentOffset:{{.TotalCurrentOffset}}|TotalHighOffset:{{.TotalHighOffset}}|从kafka获取消息:{{.GetMsgFromKafkaCount}}|从Http获取消息:{{.GetMsgFromHttpCount}}|Http调用次数:{{.ConsumeHttpCallCount}}|队列大小:{{.MsgChannelCurrentSize}}|速度:{{.SpeedPersecond}}个/秒|LastMsgTimestamp:{{.LastMsgTimestamp}}</h4>
+    <table width="100%" border="1">
+        <tr align="center">
+            <td>Id</td>
+            <td>CurrentOffset</td>
+            <td>HighOffset</td>
+        </tr>
+        {{range .PartitionStatusItemList}}
+        <tr align="center">
+            <td>{{.Id}}</td>
+            <td>{{.CurrentOffset}}</td>
+            <td>{{.HighOffset}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{end}}
+    
+
+    <h3>可访问网址</h3>
+    <table width="100%" border="1">
+        {{range .AppUrlItemList}}
+        <tr align="center">
+            <td>{{.Name}}</td>
+            <td>
+                <a href='{{.Url}}'>{{.Url}}</a>
+            </td>
+        </tr>
+        {{end}}
+    </table>
+</body>
+
+</html>

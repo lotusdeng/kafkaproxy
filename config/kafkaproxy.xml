@@ -1,0 +1,45 @@
+<root minlevel="trace"> 
+    <httoPort>9002</httoPort>
+	<kafka>
+		<address>172.16.234.81:9092</address>
+		<topicGroups>
+			<topicGroup>protobuf_ComProto_RealTimeVhicle_dpssFinal:XiaMenVehicleSync_meiya</topicGroup>
+		</topicGroups>
+		<!--new:-1|old:-2|offset:[0....]-->
+		<offsetInitial>-2</offsetInitial>
+		<offsetCommitInterval>1</offsetCommitInterval>
+		<clientCount>1</clientCount>
+		<apiVersion>V0_11_0_0</apiVersion>
+	</kafka>
+	<discardKafkaMsg>
+		<enable>true</enable>
+		<topicGroups>
+			<topicGroup>protobuf_ComProto_RealTimeVhicle_dpssFinal:XiaMenVehicleSync_meiya</topicGroup>
+		</topicGroups>
+	</discardKafkaMsg>
+	<msgItemChannelMaxSize>100000</msgItemChannelMaxSize>
+	<consumeMsgTimeoutBySecond>10</consumeMsgTimeoutBySecond>
+	<autoRestart>
+		<enable>true</enable>
+		<byDurationHour>5</byDurationHour>
+		<byMsgCount>5000000</byMsgCount>
+	</autoRestart>
+    <filter enabled="true">
+		<tag>stdout</tag>
+		<type>console</type>
+		<level>DEBUG</level>
+		<property name="format">[%DT%T] [%L] [%S] %M</property>
+    </filter>
+    <filter enabled="true">
+		<tag>file</tag>
+		<type>file</type>
+		<level>DEBUG</level>
+		<property name="filename">log/kafkaproxy.txt</property>
+		<property name="format">[%DT%T] [%L] [%S] %M</property>
+		<property name="rotate">true</property> <!-- true enables log rotation, otherwise append -->
+		<property name="maxsize">10M</property> <!-- \d+[KMG]? Suffixes are in terms of 2**10 -->
+		<property name="maxfilecount">5</property> <!-- max log file-->
+		<property name="maxlines">0K</property> <!-- \d+[KMG]? Suffixes are in terms of thousands -->
+		<property name="daily">true</property> <!-- Automatically rotates when a log message is written after midnight -->
+  	</filter>
+</root>

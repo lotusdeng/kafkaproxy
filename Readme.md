@@ -1,0 +1,1 @@
+让consumer以http方式访问kakfa，同时consume可以弹性的增加或减少，解决了不同业务对partition个数的需求
