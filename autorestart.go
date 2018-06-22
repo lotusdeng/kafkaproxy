@@ -1,16 +1,17 @@
 package main
 
 import (
-	"kedacom/haiou/common"
 	"os"
 	"sync/atomic"
 	"time"
+
+	"github.com/lotusdeng/gocommon"
 
 	log "github.com/lotusdeng/log4go"
 )
 
 func AutoRestartLoop(quitChannel chan os.Signal) {
-	defer common.ExitWaitGroup.Done()
+	defer gocommon.ExitWaitGroup.Done()
 	startTime := time.Now()
 	for {
 		time.Sleep(1 * time.Second)
@@ -24,7 +25,7 @@ func AutoRestartLoop(quitChannel chan os.Signal) {
 			needRestart = true
 			log.Warn("AutoRestart 消息个数到了, 程序重启, 个数:", atomic.LoadInt64(&AppDataSingleton.GetMsgFromtKafkaCount))
 		}
-		if common.IsAppQuit() {
+		if gocommon.IsAppQuit() {
 			break
 		}
 

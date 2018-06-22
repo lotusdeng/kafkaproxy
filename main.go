@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"kedacom/haiou/common"
+	"github.com/lotusdeng/gocommon"
 
 	"github.com/Shopify/sarama"
 	log "github.com/lotusdeng/log4go"
@@ -52,14 +52,14 @@ func main() {
 
 	//GetKafkaTopicPartitionOffsets(AppConfigSingleton.Kafka.Address, AppConfigSingleton.Kafka.Topic, AppConfigSingleton.Kafka.Group)
 	//return
-	common.InitAppQuit()
-	defer common.UinitAppQuit()
+	gocommon.InitAppQuit()
+	defer gocommon.UinitAppQuit()
 
 	GlobalMsgChannel = make(chan *sarama.ConsumerMessage, AppConfigSingleton.MsgItemChannelMaxSize)
 	log.Info("main http url:http://127.0.0.1:", AppConfigSingleton.HttpPort)
 
-	common.ExitWaitGroup.Add(1)
-	go HttpServerLoop(AppConfigSingleton.HttpPort, common.GlobalQuitChannel)
+	gocommon.ExitWaitGroup.Add(1)
+	go HttpServerLoop(AppConfigSingleton.HttpPort, gocommon.GlobalQuitChannel)
 
 	for _, topicGroupStr := range AppConfigSingleton.Kafka.TopicGroups {
 		tokens := strings.Split(topicGroupStr, ":")
@@ -78,16 +78,16 @@ func main() {
 			}
 			for i := 0; i < AppConfigSingleton.Kafka.ClientCount; i += 1 {
 				log.Info("http create pull msg from kafka loop, topic:", topicGroup.Topic, ", group:", topicGroup.Group)
-				common.ExitWaitGroup.Add(1)
-				go PullMsgFromKafkaLoop(AppConfigSingleton.Kafka.Address, topicGroup, discardKafkaMsg, common.GlobalQuitChannel)
+				gocommon.ExitWaitGroup.Add(1)
+				go PullMsgFromKafkaLoop(AppConfigSingleton.Kafka.Address, topicGroup, discardKafkaMsg, gocommon.GlobalQuitChannel)
 			}
 		}
 	}
 	if AppConfigSingleton.AutoRestart.Enable {
 		log.Info("main start auto restart")
-		common.ExitWaitGroup.Add(1)
-		go AutoRestartLoop(common.GlobalQuitChannel)
+		gocommon.ExitWaitGroup.Add(1)
+		go AutoRestartLoop(gocommon.GlobalQuitChannel)
 	}
-	common.ExitWaitGroup.Wait()
+	gocommon.ExitWaitGroup.Wait()
 	log.Info("main exit")
 }

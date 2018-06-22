@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"kedacom/haiou/common"
 	"net/http"
 	"os"
 	"sort"
 	"strconv"
 	"sync/atomic"
 	"time"
+
+	"github.com/lotusdeng/gocommon"
 
 	"github.com/Shopify/sarama"
 	log "github.com/lotusdeng/log4go"
@@ -302,7 +303,7 @@ func indexHandle(w http.ResponseWriter, req *http.Request) {
 func stopHandle(w http.ResponseWriter, req *http.Request) {
 	log.Warn("http /stop")
 	w.Write([]byte("stop ok"))
-	common.SignalAppQuit()
+	gocommon.SignalAppQuit()
 	os.Exit(1)
 }
 
@@ -344,8 +345,8 @@ func consumeHandle(w http.ResponseWriter, req *http.Request) {
 		}
 		for i := 0; i < AppConfigSingleton.Kafka.ClientCount; i += 1 {
 			log.Info("http create pull msg from kafka loop, topic:", topicGroup.Topic, ", group:", topicGroup.Group)
-			common.ExitWaitGroup.Add(1)
-			go PullMsgFromKafkaLoop(AppConfigSingleton.Kafka.Address, topicGroup, discardKafkaMsg, common.GlobalQuitChannel)
+			gocommon.ExitWaitGroup.Add(1)
+			go PullMsgFromKafkaLoop(AppConfigSingleton.Kafka.Address, topicGroup, discardKafkaMsg, gocommon.GlobalQuitChannel)
 		}
 	}
 	AppDataSingleton.TopicGroupMapMutex.Unlock()
@@ -370,7 +371,7 @@ func consumeHandle(w http.ResponseWriter, req *http.Request) {
 }
 
 func HttpServerLoop(httpPort string, quitChannel chan os.Signal) {
-	defer common.ExitWaitGroup.Done()
+	defer gocommon.ExitWaitGroup.Done()
 	http.HandleFunc("/", indexHandle)
 	http.HandleFunc("/stop", stopHandle)
 	http.HandleFunc("/safestop", safeStopHandle)
@@ -386,9 +387,9 @@ func HttpServerLoop(httpPort string, quitChannel chan os.Signal) {
 		Handler: http.DefaultServeMux,
 	}
 
-	common.ExitWaitGroup.Add(1)
+	gocommon.ExitWaitGroup.Add(1)
 	go func() {
-		defer common.ExitWaitGroup.Done()
+		defer gocommon.ExitWaitGroup.Done()
 		<-quitChannel
 		log.Info("http receive quit signal, http server close")
 		httpServer.Close()

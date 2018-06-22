@@ -1,10 +1,11 @@
 package main
 
 import (
-	"kedacom/haiou/common"
 	"os"
 	"sync/atomic"
 	"time"
+
+	"github.com/lotusdeng/gocommon"
 
 	"github.com/Shopify/sarama"
 	log "github.com/lotusdeng/log4go"
@@ -60,7 +61,7 @@ func SafeStop() {
 	}
 
 	log.Warn("AutoRestart SignalAppQuit")
-	common.SignalAppQuit()
+	gocommon.SignalAppQuit()
 	time.Sleep(1 * time.Second)
 	os.Exit(1)
 }

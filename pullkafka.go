@@ -1,11 +1,12 @@
 package main
 
 import (
-	"kedacom/haiou/common"
 	"os"
 	"strings"
 	"sync/atomic"
 	"time"
+
+	"github.com/lotusdeng/gocommon"
 
 	"github.com/Shopify/sarama"
 	saramacluter "github.com/bsm/sarama-cluster"
@@ -13,7 +14,7 @@ import (
 )
 
 func PullMsgFromKafkaLoop(kafkaAddress string, topicGroup *TopicGroup, discardKafkaMsg *int64, quitChannel chan os.Signal) {
-	defer common.ExitWaitGroup.Done()
+	defer gocommon.ExitWaitGroup.Done()
 	config := saramacluter.NewConfig()
 
 	config.Consumer.Return.Errors = true
@@ -41,14 +42,14 @@ func PullMsgFromKafkaLoop(kafkaAddress string, topicGroup *TopicGroup, discardKa
 		", group:", topicGroup.Group, " offset init:", AppConfigSingleton.Kafka.OffsetInitial, ", commit interval:", AppConfigSingleton.Kafka.OffsetCommitInterval)
 	var consumer *saramacluter.Consumer
 	for {
-		if common.IsAppQuit() {
+		if gocommon.IsAppQuit() {
 			log.Info("consumer IsAppQuit is true, loop break")
 			return
 		}
 		tmpConsumer, err := saramacluter.NewConsumer(brokers, topicGroup.Group, topics, config)
 		if err != nil {
 			log.Info("consumer connect kafka fail, error:", err)
-			if common.IsAppQuit() {
+			if gocommon.IsAppQuit() {
 				log.Info("consumer IsAppQuit is true, loop break")
 				return
 			}
@@ -95,7 +96,7 @@ func PullMsgFromKafkaLoop(kafkaAddress string, topicGroup *TopicGroup, discardKa
 
 	// consume messages, watch signals
 	for {
-		if common.IsAppQuit() {
+		if gocommon.IsAppQuit() {
 			return
 		}
 		if atomic.LoadInt64(&AppDataSingleton.PauseGetMsgFromKafka) == 1 {
